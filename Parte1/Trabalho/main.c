@@ -34,12 +34,12 @@ int main(void){
     printf("Exercicio 2\n");
     Node* L1 = gera_lista(10);
     Node* L2 = gera_lista(10);
-    imprimeLista(L1);
+    /*imprimeLista(L1);
     imprimeLista(L2);
     srand(time(NULL));
     int numeroAleatorio = (rand() % 100) + 1;
     int numeroAleatorio2 = (rand() % 100) + 1;
-    printf("%d %d\n", numeroAleatorio, numeroAleatorio2);
+    printf("%d %d\n", numeroAleatorio, numeroAleatorio2);*/
 
     return 0;
 }

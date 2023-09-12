@@ -11,33 +11,31 @@ Node* criaLista(void){
 Node* insereOrd(Node* lista, int valor){
     Node* p = lista;
     Node* ult = NULL;
-    while (p!= NULL){
-        if (valor > p->num){
-            break;
-        }
-        ult = p;
-        p = p->prox;
-    }
-    
-    if(p==NULL) {
+
+    if (p==NULL){
         Node* novo = (Node*)malloc(sizeof(Node));
         novo->num = valor;
         novo->prox = p;
-        if (ult == NULL){
-            return novo;
-        }
-        else{  
-            ult->prox = novo;
-            return lista;
-        }
+        return novo;
     }
-    else{
+    while (p!= NULL && valor > p->num){
+
+        ult = p;
+        p = p->prox;
+    }
+    if (p != NULL && valor != p->num){
         Node* novo = (Node*)malloc(sizeof(Node));
         novo->num = valor;
         novo->prox = p;
         ult->prox = novo;
-        return lista;
     }
+    else if (p == NULL){
+        Node* novo = (Node*)malloc(sizeof(Node));
+        novo->num = valor;
+        novo->prox = p;
+        ult->prox = novo;
+    }
+    return lista;
 }
 
 Node* insereNoFinal(Node* lista, int valor){
@@ -72,6 +70,16 @@ Node* gera_lista(int tamanho){
         lista = insereOrd(lista, numeroAleatorio);
     }
     return lista;
+}
+
+int tamanhoLista(Node* lista){
+
+    Node* p = lista;
+    int contador = 0;
+    while (p != NULL){
+        contador++;
+    }
+    return contador;
 }
 
 Node* intercalaLista(Node* lista1, Node* lista2){

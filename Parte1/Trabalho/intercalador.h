@@ -13,6 +13,7 @@ Node* gera_lista(int tamanho);
 Node* intercalaLista(Node* lista1, Node* lista2);
 void imprimeLista(Node* lista);
 void liberaLista(Node* lista);
+int tamanhoLista(Node* lista);
 
 
 

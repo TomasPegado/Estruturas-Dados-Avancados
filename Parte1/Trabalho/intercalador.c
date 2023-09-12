@@ -11,18 +11,15 @@ Node* criaLista(void){
 Node* insereOrd(Node* lista, int valor){
     Node* p = lista;
     Node* ult = NULL;
-    while (p!= NULL && valor != p->num && (valor > p->num && valor < ult->num)){
+    while (p!= NULL){
+        if (valor > p->num){
+            break;
+        }
         ult = p;
         p = p->prox;
     }
     
-    if(valor == p->num){
-        // Gere um número aleatório entre 1 e 100
-        srand(time(NULL));
-        int numeroAleatorio = (rand() % 100) + 1;
-        insereOrd(lista, numeroAleatorio);
-    }
-    else if(p==NULL) {
+    if(p==NULL) {
         Node* novo = (Node*)malloc(sizeof(Node));
         novo->num = valor;
         novo->prox = p;
@@ -71,7 +68,6 @@ Node* gera_lista(int tamanho){
     Node* lista = criaLista();
     for(int i = 0; i<tamanho; i++){
         // Gere um número aleatório entre 1 e 100
-        srand(time(NULL));
         int numeroAleatorio = (rand() % 100) + 1;
         lista = insereOrd(lista, numeroAleatorio);
     }

@@ -26,10 +26,11 @@ void insert(Node* root, int height){
 
 void findCompetitorA(Node* root, Node*a, int* count){
 
-    if (root == NULL) return NULL;
+    if (root == NULL) return;
     if (root->right == NULL){
         a = root;
         *count += 1;
+        return;
     }
     else{
         *count += 1;
@@ -39,10 +40,11 @@ void findCompetitorA(Node* root, Node*a, int* count){
 
 void findCompetitorC(Node* root, Node*c, int* count){
 
-    if (root == NULL) return NULL;
+    if (root == NULL) return;
     if (root->left == NULL){
         c = root;
         *count += 1;
+        return;
     }
     else{
         *count += 1;
@@ -52,7 +54,7 @@ void findCompetitorC(Node* root, Node*c, int* count){
 
 void find2Competitors(Node* root, int heightB, Node* a, Node* c, int* countA, int* countC){
 
-    if (root == NULL) return NULL;
+    if (root == NULL) return;
 
     else if (heightB < root->height)
         find2Competitors(root->left, heightB, a, c, countA, countC);

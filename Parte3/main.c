@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "filas.h"
+#include "kruskal.h"
 
 // Estrutura para um nó em uma lista de adjacências
 struct AdjListNode {
@@ -17,6 +18,7 @@ struct AdjList {
 // Estrutura do Grafo
 struct Graph {
     int V;
+    int E; // Adicionado para manter a contagem de arestas
     struct AdjList* array;
 };
 
@@ -33,6 +35,7 @@ struct AdjListNode* newAdjListNode(int dest, int weight) {
 struct Graph* createGraph(int V) {
     struct Graph* graph = (struct Graph*) malloc(sizeof(struct Graph));
     graph->V = V;
+    graph->E = 0; // Inicializa o contador de arestas como 0
 
     // Criar um array de listas de adjacências. Tamanho do array será V
     graph->array = (struct AdjList*) malloc(V * sizeof(struct AdjList));
@@ -56,6 +59,9 @@ void addEdge(struct Graph* graph, int src, int dest, int weight) {
     newNode = newAdjListNode(src, weight);
     newNode->next = graph->array[dest].head;
     graph->array[dest].head = newNode;
+
+    // Incrementa a contagem de arestas do grafo
+    graph->E++;
 }
 
 
@@ -117,6 +123,85 @@ void BFS(struct Graph* graph, int startVertex) {
     free(queue);
 }
 
+// Função para coletar todas as arestas do grafo
+struct Edge* CollectEdges(struct Graph* graph, int* numEdges) {
+    int V = graph->V;
+    int E = 0;
+    // Supomos que o número máximo de arestas é V(V-1)/2 que é o caso de um grafo completo
+    struct Edge* edges = malloc(sizeof(struct Edge) * V * (V - 1) / 2);
+    
+    for (int v = 0; v < V; ++v) {
+        struct AdjListNode* temp = graph->array[v].head;
+        while (temp != NULL) {
+            if (v < temp->dest) { // Isso garante que cada aresta seja contabilizada apenas uma vez
+                edges[E].src = v;
+                edges[E].dest = temp->dest;
+                edges[E].weight = temp->weight;
+                E++;
+            }
+            temp = temp->next;
+        }
+    }
+
+    *numEdges = E; // Atualizar o número de arestas
+    return edges;
+}
+
+// Função para construir a Árvore Geradora Mínima usando o algoritmo de Kruskal
+void KruskalMST(struct Graph* graph) {
+    int V = graph->V;
+    struct Edge result[V];  // Isto irá armazenar o resultado MST
+    int e = 0;  // Índice usado para result[]
+    int i = 0;  // Índice usado para arestas ordenadas
+
+    // Passo 1: Ordenar todas as arestas em ordem não decrescente de seus pesos
+    struct Edge* edges = CollectEdges(graph, &e); 
+    qsort(edges, e, sizeof(edges[0]), compareEdges);
+
+    // Alocar memória para criar V subconjuntos
+    struct subset *subsets = (struct subset*) malloc(V * sizeof(struct subset));
+
+    // Criar V subconjuntos com elementos únicos
+    for (int v = 0; v < V; ++v) {
+        subsets[v].parent = v;
+        subsets[v].rank = 0;
+    }
+
+    // Número de arestas a serem tomadas é igual a V-1
+    i = 0; // Índice para as arestas ordenadas
+    while (e < V - 1 && i < graph->E) {
+        // Passo 2: Pegar a menor aresta e incrementar o índice para a próxima iteração
+        struct Edge next_edge = edges[i++];
+
+        int x = find(subsets, next_edge.src);
+        int y = find(subsets, next_edge.dest);
+
+        // Se a inclusão dessa aresta não causa ciclo, inclua-a no resultado
+        // e incremente o índice do resultado para a próxima aresta
+        if (x != y) {
+            result[e++] = next_edge;
+            Union(subsets, x, y);
+        }
+        // Caso contrário, descarte a próxima_edge
+    }
+
+    // Variável para armazenar o custo total da MST
+    int totalCost = 0;
+
+    // Imprimir os conteúdos da árvore geradora mínima
+    printf("Arestas na Árvore Geradora Mínima:\n");
+    for (i = 0; i < e; ++i) {
+        printf("(%d -- %d == %d)\n", result[i].src, result[i].dest, result[i].weight);
+        totalCost += result[i].weight;
+    }
+    printf("Custo total da Árvore Geradora Mínima: %d\n", totalCost);
+
+    // Libere a memória alocada para os subconjuntos
+    free(subsets);
+    // Libere a memória alocada para o array de arestas, se necessário
+    free(edges);
+}
+
 int main(void) {
     int V = 10; // O grafo tem 10 vértices
     struct Graph* graph = createGraph(V);
@@ -143,8 +228,14 @@ int main(void) {
     addEdge(graph, 4, 7, 2);
     addEdge(graph, 7, 6, 3);
 
+    printf("Questao1:\n");
     // Chamar o BFS
-    BFS(graph, 1); // Começando do vértice 0, por exemplo
+    BFS(graph, 1); // Começando do vértice 0
+
+
+    printf("\nQuestao2:\n");
+    // Chamar o KruskalMST
+    KruskalMST(graph);
 
     return 0;
 }

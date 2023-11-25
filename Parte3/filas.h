@@ -1,0 +1,14 @@
+// Estrutura para representar uma fila
+struct Queue {
+    int front, rear, size;
+    unsigned capacity;
+    int* array;
+};
+
+// Funções auxiliares para manipular a fila
+struct Queue* createQueue(unsigned capacity);
+int isFull(struct Queue* queue);
+int isEmpty(struct Queue* queue);
+void enqueue(struct Queue* queue, int item);
+int dequeue(struct Queue* queue);
+int front(struct Queue* queue);
